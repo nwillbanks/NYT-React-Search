@@ -8,19 +8,24 @@ class Books extends Component {
         this.state = {
             books: [],
             searchField: '',
+            timeoutId: null
         }
     }
 
     handleSearch = (e) => {
         //console.log(e.target.value)
         this.setState({searchField: e.target.value });
-    }
-
-    componentDidMount() {
-        fetch('https://www.googleapis.com/books/v1/volumes?q=search+terms')
+        clearTimeout(this.state.timeoutId);
+        const timeoutId = setTimeout(() => {
+            fetch('https://www.googleapis.com/books/v1/volumes?q=' + encodeURIComponent(this.state.searchField))
             .then(response => response.json())
-            .then(data => this.setState({ data }));
-        }
+            .then(data => {
+                this.setState({ books: data.items });
+                console.log(data.items);
+            });
+        }, 1000);
+        this.setState({timeoutId: timeoutId});
+    }
 
     render() {
         return (
