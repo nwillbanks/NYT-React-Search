@@ -12,28 +12,49 @@ class Books extends Component {
         }
     }
 
-    handleSearch = (e) => {
-        //console.log(e.target.value)
+    handleSearchText = (e) => {
         this.setState({searchField: e.target.value });
-        clearTimeout(this.state.timeoutId);
-        const timeoutId = setTimeout(() => {
-            fetch('https://www.googleapis.com/books/v1/volumes?q=' + encodeURIComponent(this.state.searchField))
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ books: data.items });
-                console.log(data.items);
-            });
-        }, 1000);
-        this.setState({timeoutId: timeoutId});
     }
 
-    render() {
-        return (
-        <div>
-            <Search handleSearch={this.handleSearch} />
-        </div>
-        );
+    handleSearch = (e) => {
+        e.preventDefault()
+        //console.log(e.target.value)
+        const mySearch = encodeURIComponent(this.state.searchField);
+        clearTimeout(this.state.timeoutId);
+       
+            fetch('https://www.googleapis.com/books/v1/volumes?q=' + mySearch)
+            .then(results => {
+                return results.json();
+            })
+            .then(data => {
+                this.setState({ books: data.items });
+                console.log(this.state.books);
+        });
     }
+
+render() {
+    const books = this.state.books;
+    return (
+    <div>
+        <Search 
+        handleSearchText = {e => this.handleSearchText(e)}
+        handleSearch= {e => this.handleSearch(e)} 
+        />
+        <div>
+        <ul>
+          {books.map(book => (
+            <li key={book.id}>
+            {book.volumeInfo.title}
+            {book.volumeInfo.authors}
+            <img src={book.volumeInfo.imageLinks.smallThumbnail} alt="book thumbnail"/>
+            </li>
+          ))}
+          </ul>
+        </div>
+    </div>
+    );
+}
 }
 
 export default Books;
+
