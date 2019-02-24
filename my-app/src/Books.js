@@ -44,8 +44,8 @@ render() {
         <ul>
           {books.map(book => (
             <li key={book.id}>
-            {book.volumeInfo.title}
-            {book.volumeInfo.authors}
+            <h1>{book.volumeInfo.title}</h1>
+            <h1>{book.volumeInfo.authors}</h1>
             <img src={book.volumeInfo.imageLinks.smallThumbnail} alt="book thumbnail"/>
             </li>
           ))}
